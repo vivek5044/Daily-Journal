@@ -1,0 +1,18 @@
+<%- include("partials/header") -%>
+
+  <h1>Home</h1>
+  <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dignissimos unde consectetur deleniti ipsum
+    nulla iusto aperiam minus enim officiis culpa delectus mollitia voluptatum sequi, iste inventore sapiente
+    voluptatibus quisquam.</p>
+
+  <% for(let i=0; i<posts.length;i++){ %>
+    <h5>
+      <%= posts[i].title %>
+    </h5>
+    <p>
+      <%= posts[i].content.substring(0, 100) + " ..." %>
+      <a href="/posts/<%= posts[i].title %>">Read More</a>
+    </p>
+    <%}%>
+
+      <%- include("partials/footer") -%>
