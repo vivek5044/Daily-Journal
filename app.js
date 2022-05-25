@@ -2,8 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 var _ = require('lodash');
+const mongoose = require("mongoose");
 
 const app = express();
+mongoose.connect("mongodb://localhost:27017/dailyJournalDB");
 
 const homeStartingContent = "Renowned for their pan- African presence and with a reputation for delivering world-class Digital CustorT Experience and Technology Services, DSC's impact sourcing solution, in partnership with the Maharishi Institute drives the education and skills development of South Africa's youth workforce while simultaneol reduchg youth unemployment, a glaring concern in the country and even more so in a post-pandemic economic climate."
 const aboutContent = "Renowned for their pan- African presence and with a reputation for delivering world-class Digital CustorT Experience and Technology Services, DSC's impact sourcing solution, in partnership with the Maharishi Institute drives the education and skills development of South Africa's youth workforce while simultaneol reduchg youth unemployment, a glaring concern in the country and even more so in a post-pandemic economic climate."
@@ -16,18 +18,30 @@ app.use(express.static("public"));
 
 var posts = [];
 
+const postSchema = new mongoose.Schema({
+    title: String,
+    content: String
+});
+
+const Post = mongoose.model("Post", postSchema);
+
+
 
 app.get("/", function (req, res) {
     // console.log(posts);
     let size = posts.length;
-    res.render("home", {posts: posts});
+
+    Post.find({}, function(err, posts){
+        res.render("home", {posts: posts});
+    })
+
+    // res.render("home", {posts: posts});
 });
 
 app.get('/posts/:postName', (req, res)=>{
     const x = _.lowerCase(req.params.postName);
     var a = false;
-    const post = "";
-    const title = "";
+    
     for(let i=0;i<posts.length;i++){
         const y = _.lowerCase(posts[i].title);
         if(x===y){
@@ -35,9 +49,9 @@ app.get('/posts/:postName', (req, res)=>{
         }
     }
 
+    console.log(req.params.postName);
+    res.send(req.params.post);
 
-    // console.log(req.params.postName);
-    // res.send(req.params.post);
 });
 
 
@@ -55,12 +69,16 @@ app.get("/compose", function(req, res){
 });
 
 app.post("/compose", function(req, res){
-    const post = {
+    
+    const newpost = new Post({
         title: req.body.postTitle,
         content: req.body.postBody
-    }
+    })
 
-    posts.push(post);
+    // console.log(newPost);
+
+    //posts.push(post);
+    newpost.save();
 
     res.redirect("/");
     // console.log(x);
