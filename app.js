@@ -41,16 +41,27 @@ app.get("/", function (req, res) {
 app.get('/posts/:postName', (req, res)=>{
     const x = _.lowerCase(req.params.postName);
     var a = false;
-    
-    for(let i=0;i<posts.length;i++){
-        const y = _.lowerCase(posts[i].title);
-        if(x===y){
-            res.render("post", {title: posts[i].title, body: posts[i].content});
-        }
-    }
+    // console.log("This function is running");
+    // console.log(posts.length);
+    // for(let i=0;i<posts.length;i++){
+    //     console.log("For loop is running");
+    //     const y = _.lowerCase(posts[i].title);
+    //     if(x===y){
+    //         // console.log(posts[i].title);
+    //         // console.log(posts[i].content);
+    //         res.render("post", {title: posts[i].title, body: posts[i].content});
+    //     }
+    //     else{
+    //         console.log("error");
+    //     }
+    // };
 
-    console.log(req.params.postName);
-    res.send(req.params.post);
+    Post.findOne({title: req.params.postName}, function(err, foundItem){
+        res.render("post", {title: foundItem.title, body: foundItem.content});
+    })
+
+    // console.log(req.params.postName);
+    // res.send(req.params.postName);
 
 });
 
@@ -76,8 +87,11 @@ app.post("/compose", function(req, res){
     })
 
     // console.log(newPost);
-
-    //posts.push(post);
+    const postnew = {
+        title: req.body.postTitle,
+        content: req.body.postBody
+    }
+    posts.push(postnew);
     newpost.save();
 
     res.redirect("/");
